@@ -42,13 +42,13 @@ efect_valores_tabla <- efec_valores %>%  group_by(vigencia, Indicador, UnidadMed
 write.table(efect_valores_tabla, file = "tabla_ind_efec.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 # Tabla de indicadores total
-indicadores_inicial <- table(efec_i$Indicador) %>%  as.data.frame()
+indicadores_inicial_efec <- table(efec_i$Indicador) %>%  as.data.frame()
 
 # Tabla de indicadores de ESE
-indicadores_ese <- table(efec_tabla$Indicador) %>%  as.data.frame()
+indicadores_ese_efec <- table(efec_tabla$Indicador) %>%  as.data.frame()
 
 # Tabla de indicadores de ESE - reportados
-indicadores_final <- table(efect_valores_tabla$Indicador) %>%  as.data.frame()
+indicadores_final_efec <- table(efect_valores_tabla$Indicador) %>%  as.data.frame()
 
 
 # Tabla Indicadores Experiencia Atencion (exper)----
@@ -91,13 +91,13 @@ exper_valores_tabla <- exper_valores %>%  group_by(vigencia, Indicador, UnidadMe
 write.table(exper_valores_tabla, file = "tabla_ind_exper.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 # Tabla de indicadores total
-indicadores_inicial <- table(exper_i$Indicador) %>%  as.data.frame()
+indicadores_inicial_exper <- table(exper_i$Indicador) %>%  as.data.frame()
 
 # Tabla de indicadores de ESE
-indicadores_ese <- table(exper_tabla$Indicador) %>%  as.data.frame()
+indicadores_ese_exper <- table(exper_tabla$Indicador) %>%  as.data.frame()
 
 # Tabla de indicadores de ESE - reportados
-indicadores_final <- table(exper_valores_tabla$Indicador) %>%  as.data.frame()
+indicadores_final_exper <- table(exper_valores_tabla$Indicador) %>%  as.data.frame()
 
 
 # Tabla Indicadores Seguridad (segur)----
@@ -163,11 +163,18 @@ segur_valores_tabla <- segur_valores %>%  group_by(vigencia, Indicador, UnidadMe
 write.table(segur_valores_tabla, file = "tabla_ind_segur.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 # Tabla de indicadores total
-indicadores_inicial <- table(segur_i$Indicador) %>%  as.data.frame()
+indicadores_inicial_segur <- table(segur_i$Indicador) %>%  as.data.frame()
 
 # Tabla de indicadores de ESE
-indicadores_ese <- table(segur_tabla$Indicador) %>%  as.data.frame()
+indicadores_ese_segur <- table(segur_tabla$Indicador) %>%  as.data.frame()
 
 # Tabla de indicadores de ESE - reportados
-indicadores_final <- table(segur_valores_tabla$Indicador) %>%  as.data.frame()
+indicadores_final_segur <- table(segur_valores_tabla$Indicador) %>%  as.data.frame()
 
+
+
+# Tablas exportadas
+
+write.table(indicadores_final_efec, file = "indicadores_final_efec.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(indicadores_final_exper, file = "indicadores_final_exper.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(indicadores_final_segur, file = "indicadores_final_segur.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)

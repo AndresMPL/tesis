@@ -1,8 +1,4 @@
 
-library(pacman)
-p_load(readr, dplyr, ggplot2)
-options(scipen = 999)
-
 #-------Figura Recaudo vs. Compromisos-----
 
 recaudo_compromisos <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/recaudo.txt", 

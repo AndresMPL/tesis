@@ -23,7 +23,7 @@ procesar_tabla <- function(nombre_archivo, lista_ese) {
     rename(VIGENCIA = AÑO) %>%
     filter(COD_CHIP %in% lista_ese$cod_habilitacion)
   return(tabla)
-  }
+}
 
 # Lista de nombres de archivos: "lista_archivos_txt"
 
@@ -31,29 +31,29 @@ procesar_tabla <- function(nombre_archivo, lista_ese) {
 
 tablas_vitales <- lapply(lista_archivos_txt, procesar_tabla, lista_ese)
 
-#Haremos unc copia de la lista debido a su tamaño para no reprocesar
+#Haremos una copia de la lista debido a su tamaño para no reprocesar
 deep_copy <- function(x) {
   if (is.list(x)) {
     return(lapply(x, deep_copy))
   } else {
     return(x)
   }
-  }
+}
 
 tablas_vitales_copia <- deep_copy(tablas_vitales)
 
 # Opción de restaurar la lista original
-tablas_vitales <- deep_copy(tablas_vitales_copia)
+# tablas_vitales <- deep_copy(tablas_vitales_copia)
 
 #-------------------------------------------------------------------------------
 
 # Limpiar el formato numérico de la "EDAD"
 
 limpiar_columna_numerica <- function(x) {
-    x %>%
+  x %>%
     filter(grepl("^\\d+$", EDAD)) %>%  # Filtra filas que tengan solo números
     mutate(EDAD = as.numeric(EDAD)) # Convierte la columna a formato numérico
-    }
+}
 
 tablas_vitales_limpia <- lapply(tablas_vitales, limpiar_columna_numerica)
 
@@ -73,7 +73,7 @@ verificar_estructura <- function(x) {
   if(length(unique(longitudes)) != 1) {
     stop("Error: No todas las listas tienen el mismo número de columnas.")
   }
-  }
+}
 
 verificar_estructura(tablas_vitales)
 
@@ -91,4 +91,14 @@ verificar_tipos <- function(x) {
 }
 
 verificar_tipos(df_combinado)
+
+#-------------------------------------------------------------------------------
+
+# Frecuencia por diagnósticos
+
+
+
+#-------------------------------------------------------------------------------
+
+# Generamos la tabla de los diagnósticos que utilizaremos
 
