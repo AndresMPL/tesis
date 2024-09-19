@@ -14,6 +14,19 @@ lista_archivos_txt <- list.files(path = vitales, pattern = "\\.txt$", full.names
 
 lista_archivos_txt %>% as.data.frame()
 
+#------------------ Procesamos una tabla
+
+tabla_DxPPal18 <- read_delim("DxPPal18.txt", delim = "|", escape_double = FALSE, trim_ws = TRUE)
+
+tabla_DxPPal18 <- tabla_DxPPal18 %>%
+  mutate(COD_CHIP = substr(cod_ips, 0, 10)) %>%
+  rename(VIGENCIA = AÑO) %>%
+  filter(COD_CHIP %in% lista_ese$cod_habilitacion)
+
+tabla_DxPPal18_freq <- as.data.frame(sort(table(tabla_DxPPal18$COD_DIAG_PRIN),decreasing=TRUE))
+
+#--------------------------------------
+
 # Función para procesar cada tabla
 
 procesar_tabla <- function(nombre_archivo, lista_ese) {

@@ -21,14 +21,29 @@ rm(list=ls())
 
 setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
 
-    #Listado ESE
+    #Listado ESE----------------------------------------------------------------
     lista_ese <- read_excel("R/listado_ese.xlsx", na = "NA")
 
-    #Archivo histórico de riesgos
+    #Archivo histórico de riesgos-----------------------------------------------
     historico <- read_excel("R/historico_riesgos.xlsx", na = "NA")
     
-    #Listado de diagnósticos
+    #Listado de diagnósticos----------------------------------------------------
+    
+    #XLS Descargado de: https://web.sispro.gov.co/WebPublico/Consultas/ConsultarDetalleReferenciaBasica.aspx?Code=CIE10
+    #Los campos en blanco de "Extra_VI_Capitulo": se asignan los 3 primero dígitos de "codigo_cie10"
+
+    #Explicación: https://ais.paho.org/classifications/chapters/pdf/volume1.pdf 
+    #Capítulos - Nombres
+    #Categorías - 3 dígitos
+    #Subcategorías - 4 dígitos
+    
     diagnostico <- read_excel("R/cie10.xlsx", na = "NA")
+    dx_tabla <- diagnostico %>% 
+        select(Extra_V, Extra_VI_Capitulo, descripcion, codigo_cie10, nombre) %>% 
+        rename(Extra_V_Capitulo = Extra_V, Extra_VI_3=Extra_VI_Capitulo)
+    
+    dx_capitulos <- as.data.frame(table(dx_tabla$Extra_V_Capitulo))
+    
 
 # Scripts que vamos a ejecutar
     

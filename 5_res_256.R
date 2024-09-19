@@ -1,7 +1,7 @@
 
-#---------------Resolución 256----
+#---------------Resolución 256--------------------------------------------------
 
-# Tabla Indicadores Efectividad (efec)----
+#---Tabla Indicadores Efectividad (efec)----
 
 # Cargamos el archivo
 efec_i <- read_csv("MSPS_Calidad/IndicadoresIPS-Efectividad-Resol256Total.csv", skip = 3)
@@ -41,17 +41,13 @@ sum(is.na(efec_valores$indicador_i)) #Esta suma debe ser cero (0)
 efect_valores_tabla <- efec_valores %>%  group_by(vigencia, Indicador, UnidadMedida) %>% summarise(promedio = mean(indicador_i), .groups="drop")
 write.table(efect_valores_tabla, file = "tabla_ind_efec.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-# Tabla de indicadores total
-indicadores_inicial_efec <- table(efec_i$Indicador) %>%  as.data.frame()
-
-# Tabla de indicadores de ESE
-indicadores_ese_efec <- table(efec_tabla$Indicador) %>%  as.data.frame()
-
-# Tabla de indicadores de ESE - reportados
-indicadores_final_efec <- table(efect_valores_tabla$Indicador) %>%  as.data.frame()
+#  Comparamos los indicadores que nos quedaron
+indicadores_inicial_efec <- table(efec_i$Indicador) %>%  as.data.frame() # Total indicadores inicial
+indicadores_ese_efec <- table(efec_tabla$Indicador) %>%  as.data.frame() # Indicadores que aplican a las ESE
+indicadores_final_efec <- table(efect_valores_tabla$Indicador) %>%  as.data.frame() # Indicadores ESE - reportados
 
 
-# Tabla Indicadores Experiencia Atencion (exper)----
+#---Tabla Indicadores Experiencia Atencion (exper)----
 
 # Cargamos el archivo
 exper_i <- read_csv("MSPS_Calidad/IndicadoresIPS-ExperienciaAtencion-Resol256Total.csv", skip = 3)
@@ -90,17 +86,13 @@ sum(is.na(exper_valores$indicador_i)) #Esta suma debe ser cero (0)
 exper_valores_tabla <- exper_valores %>%  group_by(vigencia, Indicador, UnidadMedida) %>% summarise(promedio = mean(indicador_i), .groups="drop")
 write.table(exper_valores_tabla, file = "tabla_ind_exper.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-# Tabla de indicadores total
-indicadores_inicial_exper <- table(exper_i$Indicador) %>%  as.data.frame()
-
-# Tabla de indicadores de ESE
-indicadores_ese_exper <- table(exper_tabla$Indicador) %>%  as.data.frame()
-
-# Tabla de indicadores de ESE - reportados
-indicadores_final_exper <- table(exper_valores_tabla$Indicador) %>%  as.data.frame()
+#Comparamos los indicadores que nos quedaron
+indicadores_inicial_exper <- table(exper_i$Indicador) %>%  as.data.frame() # Total indicadores inicial
+indicadores_ese_exper <- table(exper_tabla$Indicador) %>%  as.data.frame() # Indicadores que aplican a las ESE
+indicadores_final_exper <- table(exper_valores_tabla$Indicador) %>%  as.data.frame() # Indicadores ESE - reportados
 
 
-# Tabla Indicadores Seguridad (segur)----
+#---Tabla Indicadores Seguridad (segur)----
 
 # Creamos lista de archivos de Seguridad
 
@@ -111,6 +103,7 @@ lista_archivos_txt <- lista_archivos_txt[grep("Seguridad", lista_archivos_txt)]
 # Función para procesar cada tabla
 
 setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/MSPS_Calidad")
+
 procesar_tabla <- function(x) {
   tabla <- read_csv(x, skip = 3)
   return(tabla)
@@ -162,19 +155,24 @@ sum(is.na(segur_valores$indicador_i)) #Esta suma debe ser cero (0)
 segur_valores_tabla <- segur_valores %>%  group_by(vigencia, Indicador, UnidadMedida) %>% summarise(promedio = mean(indicador_i), .groups="drop")
 write.table(segur_valores_tabla, file = "tabla_ind_segur.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-# Tabla de indicadores total
-indicadores_inicial_segur <- table(segur_i$Indicador) %>%  as.data.frame()
-
-# Tabla de indicadores de ESE
-indicadores_ese_segur <- table(segur_tabla$Indicador) %>%  as.data.frame()
-
-# Tabla de indicadores de ESE - reportados
-indicadores_final_segur <- table(segur_valores_tabla$Indicador) %>%  as.data.frame()
+# Comparamos los indicadores que nos quedaron
+indicadores_inicial_segur <- table(segur_i$Indicador) %>%  as.data.frame() # Total indicadores inicial
+indicadores_ese_segur <- table(segur_tabla$Indicador) %>%  as.data.frame() # Indicadores que aplican a las ESE
+indicadores_final_segur <- table(segur_valores_tabla$Indicador) %>%  as.data.frame() # Indicadores ESE - reportados
 
 
+#----------------Tablas exportadas de indicadores reportados
 
-# Tablas exportadas
-
+# Tablas exportadas - Indicadores que quedaron general en las ESE - Cuenta los años por indicador
 write.table(indicadores_final_efec, file = "indicadores_final_efec.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 write.table(indicadores_final_exper, file = "indicadores_final_exper.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 write.table(indicadores_final_segur, file = "indicadores_final_segur.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+
+#---------------Matriz
+
+# Datos que utilizaremos para el Panel de Datos
+
+efec_valores
+exper_valores
+segur_valores
