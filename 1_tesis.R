@@ -17,17 +17,17 @@ options(scipen = 999)
 
 rm(list=ls())
 
-# Directorio archivos básicos
+# Cargamos archivos básicos
 
-setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
+setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
 
-    #Listado ESE----------------------------------------------------------------
-    lista_ese <- read_excel("R/listado_ese.xlsx", na = "NA")
+ # Listado ESE
+    lista_ese <- read_excel("listado_ese.xlsx", na = "NA")
 
-    #Archivo histórico de riesgos-----------------------------------------------
-    historico <- read_excel("R/historico_riesgos.xlsx", na = "NA")
+ # Archivo histórico de riesgos
+    historico <- read_excel("historico_riesgos.xlsx", na = "NA")
     
-    #Listado de diagnósticos----------------------------------------------------
+ # Listado de diagnósticos
     
     #XLS Descargado de: https://web.sispro.gov.co/WebPublico/Consultas/ConsultarDetalleReferenciaBasica.aspx?Code=CIE10
     #Los campos en blanco de "Extra_VI_Capitulo": se asignan los 3 primero dígitos de "codigo_cie10"
@@ -37,15 +37,15 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
     #Categorías - 3 dígitos
     #Subcategorías - 4 dígitos
     
-    diagnostico <- read_excel("R/cie10.xlsx", na = "NA")
+    diagnostico <- read_excel("cie10.xlsx", na = "NA")
     dx_tabla <- diagnostico %>% 
-        select(Extra_V, Extra_VI_Capitulo, descripcion, codigo_cie10, nombre) %>% 
-        rename(Extra_V_Capitulo = Extra_V, Extra_VI_3=Extra_VI_Capitulo)
-    
-    dx_capitulos <- as.data.frame(table(dx_tabla$Extra_V_Capitulo))
-    
+        select(capitulo_ajustado, codigo_cie10, nombre) %>% 
+        rename(nombre_dx = nombre)
 
-# Scripts que vamos a ejecutar
+ # Listado ESE
+    deflactor <- read_excel("deflactor.xlsx", na = "NA")
+
+    # Scripts que vamos a ejecutar
     
     #Estadisticas generales
     
@@ -68,17 +68,4 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
     
 # Función para ejecutar scripts
     
-    ejecutar_script_r <- function(ruta_script) {
-        if (file.exists(ruta_script)) {
-            tryCatch({
-                source(ruta_script)
-                cat("Ejecución del script:", ruta_script, "completada.\n")
-            }, error = function(e) {
-                cat("Error al ejecutar el script:", ruta_script, "\n", e$message, "\n")
-            })
-        } else {
-            cat("El archivo no existe:", ruta_script, "\n")
-        }
-    }
-    
-    ejecutar_script_r("mi_script.R")
+   

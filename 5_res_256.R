@@ -95,13 +95,11 @@ indicadores_final_exper <- table(exper_valores_tabla$Indicador) %>%  as.data.fra
 #---Tabla Indicadores Seguridad (segur)----
 
 # Creamos lista de archivos de Seguridad
-
 seguridad <- "C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/MSPS_Calidad"
 lista_archivos_txt <- list.files(path = seguridad, pattern = "\\.csv$", full.names = FALSE)
 lista_archivos_txt <- lista_archivos_txt[grep("Seguridad", lista_archivos_txt)]
 
 # Función para procesar cada tabla
-
 setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/MSPS_Calidad")
 
 procesar_tabla <- function(x) {
@@ -112,11 +110,9 @@ procesar_tabla <- function(x) {
 # Lista de nombres de archivos: "lista_archivos_txt"
 
 # Lista donde se almacenarán las tablas procesadas
-
 tabla_seguridad <- lapply(lista_archivos_txt, procesar_tabla)
 
 # Volver todo una sola tabla
-
 segur_i <- bind_rows(tabla_seguridad)
 
 # Ajustamos campos, transformamos fecha de año y dejamos solo las ESE en los años que necesitamos
@@ -172,7 +168,6 @@ write.table(indicadores_final_segur, file = "indicadores_final_segur.txt", sep =
 #---------------Matriz
 
 # Datos que utilizaremos para el Panel de Datos
-
 efec_valores
 exper_valores
 segur_valores
