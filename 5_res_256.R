@@ -1,6 +1,8 @@
 
 #---------------Resolución 256--------------------------------------------------
 
+setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
+
 #---Tabla Indicadores Efectividad (efec)----
 
 # Cargamos el archivo

@@ -6,7 +6,7 @@
 # Importar el archivo histograma
 
 setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R")
-histograma_todo <- read_excel("histograma.xlsx")
+histograma <- read_excel("histograma.xlsx")
 histograma_riesgo <- histograma %>% filter(histograma$total != 0)
 
 # Resultados en un dataframe
@@ -59,3 +59,7 @@ figura2 <- ggplot(data = histograma_riesgo, mapping = aes(x = total))  +
   )
 
 figura2
+
+# ESE que han estado siempre en Riesgo Alto/Medio
+
+todo_riesgo <- histograma_riesgo %>%  filter(total == 8)

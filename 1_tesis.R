@@ -10,7 +10,7 @@
 # Librerías que necesitamos
 
 library(pacman)
-p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2)
+p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2, cluster)
 options(scipen = 999)
 
 # Limpiamos el entorno
@@ -45,27 +45,21 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
  # Listado ESE
     deflactor <- read_excel("deflactor.xlsx", na = "NA")
 
-    # Scripts que vamos a ejecutar
-    
-    #Estadisticas generales
-    
-    
-    #Estadisticas Vitales
-    
-    
-    #Resolución 256
-    
-    
-    #Información Presupuestal y Capacidad SIHO
+# Scripts que vamos a ejecutar
 
+    histograma      <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/2_histograma.R"
+    nubes_puntos    <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/3_nubes_puntos.R"
+    vitales         <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/4_vitales.R"
+    res_256         <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/5_res_256.R"
+    SIHO            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/6_SIHO.R"
+    Panel            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/7_panel.R"
+    Matrix            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_model.R"
     
-    #Generar el Panel de datos
-    
-    
-    #Ejecutar el MLR
-    
-    
-    
-# Función para ejecutar scripts
-    
+    source(histograma)
+    #source(nubes_puntos)
+    source(vitales)
+    source(res_256)
+    source(SIHO)
+    source(Panel)
+    source(Matrix)
    

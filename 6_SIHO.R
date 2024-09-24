@@ -12,7 +12,8 @@ ingresos_conceptos <- as.data.frame(sort(table(ingresos$concepto), decreasing = 
 
 # Tabla de Ingresos totales
 ingresos_total <- ingresos %>% filter(concepto == "Total de ingresos")
-
+ingresos_total <- ingresos_total %>% mutate(porc_recaudo = ingresos_recaudo_real/ingresos_definitivo_real)
+ingresos_total$porc_recaudo[ingresos_total$porc_recaudo == Inf] <- 0
 
 # GASTOS------------------------------------------------------------------------
 # Cargamos Gastos 2012 - 2019
@@ -23,6 +24,7 @@ gastos_conceptos <- as.data.frame(sort(table(gastos$concepto), decreasing = TRUE
 
 # Tabla de Gastos totales
 gastos_total <- gastos %>% filter(concepto == "TOTAL DE GASTOS" | concepto == "INVERSION" | concepto == "GASTOS DE FUNCIONAMIENTO")
+gastos_total <- gastos_total %>%  mutate(porc_compromisos = gastos_compromiso_real/gastos_definitivo_real)
 
 
 # CARTERA-----------------------------------------------------------------------
@@ -34,6 +36,11 @@ cartera_conceptos <- as.data.frame(sort(table(cartera$concepto), decreasing = TR
 
 # Tabla de Cartera total
 cartera_total <- cartera %>% filter(concepto == "TOTAL")
+cartera_total <- cartera_total %>% mutate(porc_60 = hasta60 / `total_cartera radicada`,
+                                          porc_61_90 = de61a90 / `total_cartera radicada`,
+                                          porc_91_180 = de91a180 /`total_cartera radicada`,
+                                          porc_181_360 = de181a360 /`total_cartera radicada`,
+                                          porc_361 = mayor360 /`total_cartera radicada`)
 
 
 # PASIVOS-----------------------------------------------------------------------
@@ -45,6 +52,8 @@ pasivos_conceptos <- as.data.frame(sort(table(pasivos$concepto), decreasing = TR
 
 # Tabla de Pasivos totales
 pasivos_total <- pasivos %>% filter(concepto == "TOTAL PASIVO")
+pasivos_total <- pasivos_total %>% mutate(porc_anterior = vigencia_anterior / total,
+                                          porc_actual = vigencia_actual / total)
 
 
 # PRODUCCION--------------------------------------------------------------------
