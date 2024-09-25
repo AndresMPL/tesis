@@ -1,27 +1,32 @@
 
 #-------Figura Recaudo vs. Compromisos-----
 
-recaudo_compromisos <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/recaudo.txt", 
+recaudo_compromisos <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/recaudo_compromisos.txt", 
                       delim = "\t", escape_double = FALSE, 
                       trim_ws = TRUE)
 
-recaudo_compromisos <- subset(recaudo_compromisos, riesgo_original != "#N/D") %>% 
-                       subset(riesgo_original == "Riesgo alto")
+recaudo_compromisos <- recaudo_compromisos %>% filter(riesgo_original != "#N/D")
+recaudo_compromisos <- recaudo_compromisos %>% filter(riesgo_original == "Riesgo alto"|riesgo_original == "Riesgo medio")
 
-table(recaudo_compromisos$riesgo_original) %>% as.data.frame()
+
+recaudo_compromisos <- recaudo_compromisos %>% select(-porc_reca_comp)
+
+recaudo_compromisos$porcentaje <- recaudo_compromisos$compromiso/recaudo_compromisos$recaudo_total
+recaudo_compromisos$ano <- as.factor(recaudo_compromisos$ano)
 
 mean_values <- recaudo_compromisos %>% group_by(ano) %>%
-               summarize(mean_porcent = mean(porc_reca_comp))
+               summarize(mean_porcent = mean(porcentaje))
 
 
-figura1 <- ggplot(data = recaudo_compromisos, aes(x = ano, y = porc_reca_comp)) +
-  geom_point(color = "#4273A1") +
-  geom_smooth(method = "lm", aes(x = ano, y = mean_porcent), data = mean_values, color = "#D55D22", se = FALSE) +
-  labs(title = "Porcentaje de recursos recaudados y comprometidos",
-       x = "Vigencia",
-       y = "Porcentaje Compromisos vs. Recaudo",
-       color = "codigo_habilitacion") +
-  theme_minimal()
+
+figura1 <- ggplot(recaudo_compromisos, aes(x = ano, y = porcentaje, color = ano)) +
+  geom_point(size = 3) + # Crea los puntos del gráfico
+  stat_summary(fun = mean, geom = "line", aes(group = 1), color = "black", size = 1) +
+  scale_color_brewer(palette = "Spectral") + 
+  labs(title = "Compromisos vs. Recaudo - ESE en Riesgo Alto/Medio",
+       x = "Año",
+       y = "Porcentaje",
+       color = "Año") +
+  theme_minimal() # Aplica un tema minimalista al gráfico
 
 figura1
-

@@ -51,15 +51,15 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
     nubes_puntos    <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/3_nubes_puntos.R"
     vitales         <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/4_vitales.R"
     res_256         <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/5_res_256.R"
-    SIHO            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/6_SIHO.R"
-    Panel            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/7_panel.R"
-    Matrix            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_model.R"
+    siho            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/6_SIHO.R"
+    panel           <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/7_panel.R"
+    matrix          <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_model.R"
     
     source(histograma)
-    #source(nubes_puntos)
+    source(nubes_puntos)
     source(vitales)
     source(res_256)
-    source(SIHO)
-    source(Panel)
-    source(Matrix)
+    source(siho)
+    source(panel)
+    source(matrix)
    

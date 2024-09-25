@@ -115,16 +115,7 @@ matrix <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/d
                      delim = "\t", escape_double = FALSE,
                      trim_ws = TRUE)
 
-# Código borrado ---------------------------------------------------------------
-#original_colnames <- colnames(panel_matrix)
+vigencias <- data.frame(vigencia = c(2012:2019))
 
-#panel_matrix <- as.matrix(panel_matrix)
-#first_two_cols <- panel_matrix[, 1:2]
-
-#remaining_cols <- matrix(as.numeric(as.vector(panel_matrix[, -c(1, 2)])), 
-#                         nrow = nrow(panel_matrix), 
-#                         ncol = ncol(panel_matrix) - 2)
-
-#panel_matrix <- cbind(first_two_cols, remaining_cols)
-#colnames(panel_matrix) <- original_colnames
-#str(panel_matrix)
+# Filtramos los años correctos
+matrix <- matrix %>% filter(VIGENCIA %in% vigencias$vigencia)
