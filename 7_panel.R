@@ -1,6 +1,8 @@
 
 #------- Creación Panel de Datos
 
+setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
+
 # Tablas con columnas que necesitamos conservar
 mx_vitales <- estad_vitales_unico %>% select(VIGENCIA, COD_CHIP, capitulo_ajustado, VALOR) %>% 
   rename(RESULTADO = capitulo_ajustado) %>% 
@@ -86,7 +88,7 @@ lista_df <- list(mx_vitales,
 panel <- bind_rows(lista_df)
 panel <- as.data.frame(panel)
 panel$VALOR <- as.numeric(as.character(panel$VALOR))
-panel$VALOR[is.na(panel$VALOR)] <- 0 
+#panel$VALOR[is.na(panel$VALOR)] <- 0 
 
 temp <- panel %>%
   dplyr::summarise(n = dplyr::n(), .by = c(VIGENCIA, COD_CHIP, CAPITULO, RESULTADO)) %>%
@@ -105,7 +107,7 @@ panel_matrix <- panel %>%
     names_from = id, 
     values_from = VALOR
     ) %>% 
-  replace(is.na(.), 0) %>%
+  #replace(is.na(.), 0) %>%
   as.matrix()
 
 panel_matrix <- as.data.frame(panel_matrix)
@@ -119,3 +121,4 @@ vigencias <- data.frame(vigencia = c(2012:2019))
 
 # Filtramos los años correctos
 matrix <- matrix %>% filter(VIGENCIA %in% vigencias$vigencia)
+

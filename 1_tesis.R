@@ -10,7 +10,7 @@
 # Librerías que necesitamos
 
 library(pacman)
-p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2, cluster)
+p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2, cluster,factoextra)
 options(scipen = 999)
 
 # Limpiamos el entorno
@@ -53,7 +53,9 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
     res_256         <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/5_res_256.R"
     siho            <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/6_SIHO.R"
     panel           <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/7_panel.R"
-    matrix          <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_model.R"
+    clusters        <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_clusters.R"
+    pca             <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/9_PCA.R"
+    cuartiles       <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/10_cuartiles.R"
     
     source(histograma)
     source(nubes_puntos)
@@ -61,5 +63,7 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
     source(res_256)
     source(siho)
     source(panel)
-    source(matrix)
+    #source(clusters) #En el panel no se imputan los valores NA/NAN/INF entonces este falla
+    source(pca)
+    source(cuartiles)
    

@@ -1,9 +1,9 @@
 
 # Model PCA---------------------------------------------------------------------
 
-matrix_pca <- matrix %>%  select(-Riesgo, -municipio, -nombre)
 matrix_pca <- matrix %>% left_join(lista_ese, by = join_by("COD_CHIP"=="cod_habilitacion"), keep = FALSE)
-matrix_pca <- matrix_pca %>%  select(-Riesgo, -municipio, -nombre_ese, -caracter, -VIGENCIA)
+matrix_pca <- matrix_pca %>%  select(-municipio, -nombre_ese, -caracter, -VIGENCIA)
+matrix_pca[is.na(matrix_pca)] <- 0 
 
 matrix_pca_tipo <- matrix_pca %>% select(nivel, COD_CHIP)
 matrix_pca_variables <- matrix_pca %>% select(-nivel, -COD_CHIP)
