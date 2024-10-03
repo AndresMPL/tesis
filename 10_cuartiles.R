@@ -93,7 +93,9 @@ mx_cuartil_resumen <- matrix_cuartiles %>%
 
 mx_cuartil_tabla2 <- mx_cuartil_resumen[complete.cases(mx_cuartil_resumen), ]
 
-mx_cuartil_tabla <- bind_rows(mx_cuartil_tabla1, mx_cuartil_tabla2) # Aquí juntamos los dos periodos evaluados
+# Tabla para combinar los dos periodos
+
+mx_cuartil_tabla <- bind_rows(mx_cuartil_tabla1, mx_cuartil_tabla2)
 
 #-------------------------------------------------------------------------------
 # Gráfico de caja Nuevos Riesgos
@@ -103,6 +105,7 @@ na_columns <- na_summary[na_summary > 0]
 print(na_columns)
 
 # Figura Año / Nivel
+
 figura3 <- ggplot(mx_cuartil_tabla, aes(x = factor(VIGENCIA), y = Promedio_Cuartil)) +
   geom_boxplot(fill = "#ABABAB", color = "black") +
   labs(title = "Gráfico de Caja: Distribución de Promedio Cuartiles por Año",
@@ -114,6 +117,7 @@ figura3 <- ggplot(mx_cuartil_tabla, aes(x = factor(VIGENCIA), y = Promedio_Cuart
 figura3
 
 # Figura Año
+
 figura4 <- ggplot(mx_cuartil_tabla, aes(x = factor(VIGENCIA), y = Promedio_Cuartil)) +
   geom_boxplot(aes(fill = factor(..group..)), color = "black") +
   #geom_jitter(width = 0.1, size = 1, color = "black", alpha = 0.6) +  # Añadir puntos de datos
@@ -144,13 +148,10 @@ mx_cuartil_tabla <- mx_cuartil_tabla[complete.cases(mx_cuartil_tabla), ]
 
 # Comparamos e identificamos casos diferentes
 
-# Tabla con los casos específicamente diferentes**
+# Tabla con la comparación de casos**
 
-riesgos_diferentes1 <- mx_cuartil_tabla %>%  
-  filter(Nuevo_Riesgo != Riesgo_Anterior) %>% 
-  select(VIGENCIA, COD_CHIP, nombre_ese, nivel, caracter,Nuevo_Riesgo, Riesgo_Anterior)
-
-write.table(riesgos_diferentes1, file = "comparación.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+mx_cuartil_tabla
+write.table(mx_cuartil_tabla, file = "comparación.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 # Tabla agrupada de comparación de casos**
 
@@ -203,14 +204,14 @@ print(figuras_list[["FiguraNivel3"]])
 
 # Figuras por año
 
-riesgo_combinado_vigencia <- bind_rows(nuevo_riesgo, riesgo_anterior) %>% rename(VIGENCIA=Var1, Nivel=Var2, Riesgo=Var3, Total=Freq)
-riesgo_combinado_vigencia <- riesgo_combinado_vigencia %>%  filter(VIGENCIA == "2012")
 colores <- c("Nuevo Riesgo" = "#54BDC2", "Riesgo Anterior" = "#F88570")
 
-figura_riesgos_2012 <- ggplot(riesgo_combinado, aes(x = Riesgo, y = Total, fill = Grupo)) +
+riesgo_combinado_vigencia <- riesgo_combinado %>%  filter(VIGENCIA == "2019")
+
+figura_riesgos_2019 <- ggplot(riesgo_combinado_vigencia, aes(x = Riesgo, y = Total, fill = Grupo)) +
   geom_bar(stat = "identity", position = "dodge") + 
   scale_fill_manual(values = colores) + # Definir los colores para cada grupo
-  labs(title = "Comparación de Categorías de Riesgos",
+  labs(title = "Comparación de Categorías de Riesgos 2019",
        x = "Categoría de Riesgo",
        y = "Frecuencia",
        fill = "Grupo de Datos") +
@@ -222,3 +223,13 @@ figura_riesgos_2012 <- ggplot(riesgo_combinado, aes(x = Riesgo, y = Total, fill 
     axis.title.y = element_text(margin = margin(r = 12)), # Agregar margen derecho al título del eje Y
     legend.title = element_text(face = "bold") # Hacer el título de la leyenda en negrita
   )
+
+figura_riesgos_2012
+figura_riesgos_2013
+figura_riesgos_2014
+figura_riesgos_2015
+figura_riesgos_2016
+figura_riesgos_2017
+figura_riesgos_2018
+figura_riesgos_2019
+

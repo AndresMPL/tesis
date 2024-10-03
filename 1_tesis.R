@@ -56,6 +56,7 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
     clusters        <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_clusters.R"
     pca             <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/9_PCA.R"
     cuartiles       <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/10_cuartiles.R"
+    regresion       <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/11_reg.R"
     
     source(histograma)
     source(nubes_puntos)
@@ -66,4 +67,5 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
     #source(clusters) #En el panel no se imputan los valores NA/NAN/INF entonces este falla
     source(pca)
     source(cuartiles)
+    source(regresion)
    

@@ -108,18 +108,3 @@ estad_caps_na <- estad_vitales %>% filter(is.na(capitulo_ajustado))
 estad_vitales_aten <- as.data.frame(sort(table(estad_vitales$TipoAtencion, useNA = "always"),decreasing=TRUE))
 estad_vitales_caps <- as.data.frame(sort(table(estad_vitales$capitulo_ajustado, useNA = "always"),decreasing=TRUE))
 
-# Tabla para estimar el nivel de reporte por año
-
-nivel_reporte <- estad_vitales %>%  group_by(VIGENCIA, COD_CHIP, capitulo_ajustado) %>% summarise(Total = sum(atenciones))
-nivel_reporte <- pivot_wider(nivel_reporte, names_from = capitulo_ajustado, values_from = Total) #Tabla en forma Matrix
-
-nivel_reporte_conteo <- nivel_reporte %>%
-  group_by(VIGENCIA) %>% 
-  summarise(across(everything(), ~ sum(!is.na(.)), .names = "no_na_{.col}"))
-
-nivel_reporte_conteo <- nivel_reporte_conteo %>%  rename(COD_CHIP = no_na_COD_CHIP)
-
-nivel_reporte_conteo_division <- nivel_reporte_conteo %>%
-  mutate(across(starts_with("no_na"), ~ . / COD_CHIP * 100, .names = "div_{.col}")) %>% 
-  select(VIGENCIA, COD_CHIP, starts_with("div_")) %>%  
-  mutate(across(starts_with("div_"), ~ sprintf("%.2f%%", .))) 

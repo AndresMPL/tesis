@@ -87,6 +87,7 @@ lista_df <- list(mx_vitales,
 
 panel <- bind_rows(lista_df)
 panel <- as.data.frame(panel)
+
 panel$VALOR <- as.numeric(as.character(panel$VALOR))
 #panel$VALOR[is.na(panel$VALOR)] <- 0 
 
@@ -97,6 +98,10 @@ temp <- panel %>%
 nombres <- data.frame(nombre = unique(panel$RESULTADO))
 nombres <- data.frame(id = paste0("var", seq_along(nombres$nombre)),nombre = nombres$nombre)
 panel <- panel %>% left_join(nombres, by = join_by("RESULTADO"=="nombre"), keep = FALSE)
+
+# Guardamos los nombres y capítulos
+panel_indicadores <- panel %>% group_by(CAPITULO, RESULTADO, id) %>%  summarise(Total = n()) %>% select(-Total)
+
 write.table(panel, file = "panel_original.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 panel <- panel %>%  select(-RESULTADO, -CAPITULO)
 
@@ -121,4 +126,26 @@ vigencias <- data.frame(vigencia = c(2012:2019))
 
 # Filtramos los años correctos
 matrix <- matrix %>% filter(VIGENCIA %in% vigencias$vigencia)
+
+
+# Tabla para estimar el nivel de reporte por año--------------------------------
+
+nivel_reporte <- panel %>%  group_by(VIGENCIA, COD_CHIP, id) %>% summarise(Total = sum(!is.na(VALOR)))
+
+nivel_reporte <- nivel_reporte %>%
+  group_by(VIGENCIA, id) %>% 
+  summarise(Total = sum(Total))
+
+nivel_reporte <- nivel_reporte %>%  mutate(Porce_Reporte = Total / nrow(lista_ese))
+
+nivel_reporte_matriz <- nivel_reporte %>% select(-Total)
+nivel_reporte_matriz <- pivot_wider(nivel_reporte_matriz, names_from = VIGENCIA, values_from = Porce_Reporte) 
+nivel_reporte_matriz <- nivel_reporte_matriz %>% mutate(Promedio_porc = round(rowMeans(across(`2012`:`2019`), na.rm = TRUE)*100, 2))
+
+nivel_reporte_matriz <- nivel_reporte_matriz %>% 
+  left_join(nombres, by = join_by("id"), keep = FALSE) %>% 
+  left_join(panel_indicadores, by = join_by("id"))
+
+# Exporta la tabla del nivel promedio de reporte por indicador
+write.table(nivel_reporte_matriz, file = "reporte_indicadores.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
