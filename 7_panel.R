@@ -1,33 +1,38 @@
 
-#------- Creación Panel de Datos
+# Creación Panel de Datos-------------------------------------------------------
 
 setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data")
 
 # Tablas con columnas que necesitamos conservar
 
-mx_vitales <- estad_vitales_unico %>% select(VIGENCIA, COD_CHIP, capitulo_ajustado, VALOR) %>% 
+mx_vitales <- estad_vitales_unico %>% 
+  select(VIGENCIA, COD_CHIP, capitulo_ajustado, VALOR) %>% 
   rename(RESULTADO = capitulo_ajustado) %>% 
   mutate(CAPITULO = "VITALES")
 
-mx_efectividad <- efec_valores %>% select(vigencia, cod_chip, Indicador, indicador_i) %>% 
+mx_efectividad <- efec_valores %>% 
+  select(vigencia, cod_chip, Indicador, indicador_i) %>% 
   rename(RESULTADO = Indicador, VALOR = indicador_i, VIGENCIA = vigencia, COD_CHIP = cod_chip) %>% 
   mutate(CAPITULO = "EFECTIVIDAD")
 
 mx_efectividad$VIGENCIA <- as.numeric(mx_efectividad$VIGENCIA)
 
-mx_experiencia <- exper_valores %>% select(vigencia, cod_chip, Indicador, indicador_i) %>% 
+mx_experiencia <- exper_valores %>% 
+  select(vigencia, cod_chip, Indicador, indicador_i) %>% 
   rename(RESULTADO = Indicador, VALOR = indicador_i, VIGENCIA = vigencia, COD_CHIP = cod_chip) %>% 
   mutate(CAPITULO = "EXPERIENCIA")
 
 mx_experiencia$VIGENCIA <- as.numeric(mx_experiencia$VIGENCIA)
 
-mx_seguridad <- segur_valores %>% select(vigencia, cod_chip, Indicador, indicador_i) %>% 
+mx_seguridad <- segur_valores %>% 
+  select(vigencia, cod_chip, Indicador, indicador_i) %>% 
   rename(RESULTADO = Indicador, VALOR = indicador_i, VIGENCIA = vigencia, COD_CHIP = cod_chip) %>% 
   mutate(CAPITULO = "SEGURIDAD")
 
 mx_seguridad$VIGENCIA <- as.numeric(mx_seguridad$VIGENCIA)
 
-mx_ingresos <- ingresos_total %>% select(año, codigo_habilitacion, porc_recaudo) %>% 
+mx_ingresos <- ingresos_total %>% 
+  select(año, codigo_habilitacion, porc_recaudo) %>% 
   rename(VALOR = porc_recaudo,  VIGENCIA = año, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "INGRESOS", RESULTADO ="PORCENTAJE DE RECAUDO")
 
@@ -36,35 +41,43 @@ mx_gastos <- gastos_total %>% select(ano, codigo_habilitacion, porc_compromisos,
   rename(CAPITULO = concepto, VALOR = porc_compromisos, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(RESULTADO ="PORCENTAJE DE COMPROMISOS")
 
-mx_cartera_60 <- cartera_total %>% select(ano, codigo_habilitacion, porc_60) %>% 
+mx_cartera_60 <- cartera_total %>% 
+  select(ano, codigo_habilitacion, porc_60) %>% 
   rename(VALOR = porc_60, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "GASTOS", RESULTADO ="PORCENTAJE CARTERA A 60")
 
-mx_cartera_61_90 <- cartera_total %>% select(ano, codigo_habilitacion, porc_61_90) %>% 
+mx_cartera_61_90 <- cartera_total %>% 
+  select(ano, codigo_habilitacion, porc_61_90) %>% 
   rename(VALOR = porc_61_90, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "GASTOS", RESULTADO ="PORCENTAJE CARTERA 61 A 90")
 
-mx_cartera_91_180 <- cartera_total %>% select(ano, codigo_habilitacion, porc_91_180) %>% 
+mx_cartera_91_180 <- cartera_total %>% 
+  select(ano, codigo_habilitacion, porc_91_180) %>% 
   rename(VALOR = porc_91_180, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "GASTOS", RESULTADO ="PORCENTAJE CARTERA 91 A 180")
 
-mx_cartera_181_360 <- cartera_total %>% select(ano, codigo_habilitacion, porc_181_360) %>% 
+mx_cartera_181_360 <- cartera_total %>% 
+  select(ano, codigo_habilitacion, porc_181_360) %>% 
   rename(VALOR = porc_181_360, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "GASTOS", RESULTADO ="PORCENTAJE CARTERA 181 A 360")
 
-mx_cartera_mayor361 <- cartera_total %>% select(ano, codigo_habilitacion, porc_361) %>% 
+mx_cartera_mayor361 <- cartera_total %>% 
+  select(ano, codigo_habilitacion, porc_361) %>% 
   rename(VALOR = porc_361, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "GASTOS", RESULTADO ="PORCENTAJE CARTERA MAYOR A 360")
 
-mx_pasivos_anterior <- pasivos_total %>% select(ano, codigo_habilitacion, porc_anterior) %>% 
+mx_pasivos_anterior <- pasivos_total %>% 
+  select(ano, codigo_habilitacion, porc_anterior) %>% 
   rename(VALOR = porc_anterior, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "PASIVOS", RESULTADO ="PORCENTAJE PASIVOS VIGENCIA ANTERIOR")
 
-mx_pasivos_actual <- pasivos_total %>% select(ano, codigo_habilitacion, porc_actual) %>% 
+mx_pasivos_actual <- pasivos_total %>% 
+  select(ano, codigo_habilitacion, porc_actual) %>% 
   rename(VALOR = porc_actual, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "PASIVOS", RESULTADO ="PORCENTAJE PASIVOS VIGENCIA ACTUAL")
 
-mx_producción_total <- producción_total %>% select(ano, codigo_habilitacion, concepto, total) %>% 
+mx_producción_total <- producción_total %>% 
+  select(ano, codigo_habilitacion, concepto, total) %>% 
   rename(VALOR = total, RESULTADO = concepto, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "PRODUCCION")
 
@@ -97,16 +110,22 @@ temp <- panel %>%
   dplyr::filter(n > 1L) %>%  as.data.frame()
 
 nombres <- data.frame(nombre = unique(panel$RESULTADO))
+
 nombres <- data.frame(id = paste0("var", seq_along(nombres$nombre)),nombre = nombres$nombre)
-panel <- panel %>% left_join(nombres, by = join_by("RESULTADO"=="nombre"), keep = FALSE)
+
+panel <- panel %>% 
+  left_join(nombres, by = join_by("RESULTADO"=="nombre"), keep = FALSE)
 
 # Guardamos los nombres y capítulos
 
-panel_indicadores <- panel %>% group_by(CAPITULO, RESULTADO, id) %>%  summarise(Total = n()) %>% select(-Total)
+panel_indicadores <- panel %>% 
+  group_by(CAPITULO, RESULTADO, id) %>%  
+  summarise(Total = n()) %>% select(-Total)
 
 write.table(panel, file = "panel_original.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-panel <- panel %>%  select(-RESULTADO, -CAPITULO)
+panel <- panel %>%  
+  select(-RESULTADO, -CAPITULO)
 
 # Generamos un Matriz
 
@@ -119,18 +138,17 @@ panel_matrix <- panel %>%
   as.matrix()
 
 panel_matrix <- as.data.frame(panel_matrix)
-vigencias <- data.frame(vigencia = c(2012:2019))
 
 # Filtramos los años correctos
 
-panel_matrix <- panel_matrix %>% filter(VIGENCIA %in% vigencias$vigencia)
+panel_matrix <- panel_matrix %>% 
+  filter(VIGENCIA %in% vigencias$vigencia)
 
 write.table(panel_matrix, file = "matrix.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 matrix <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/matrix.txt", 
                      delim = "\t", escape_double = FALSE,
                      trim_ws = TRUE)
-
 
 # Tabla para estimar el nivel de reporte por año--------------------------------
 
@@ -148,11 +166,9 @@ nivel_reporte_matriz <- panel %>%
   select(-nombre) %>%
   arrange(desc(Promedio_porc))
 
-
 # Exporta la tabla del nivel promedio de reporte por indicador
 
 write.table(nivel_reporte_matriz, file = "reporte_indicadores.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
-
 
 # Generamos la tabla de los indicadores que superan el promedio
 

@@ -6,6 +6,13 @@
 #                                                                             #
 #------------------------------------------------------------------------------
 
+# Limpieza del entorno
+
+rm(list=ls())
+
+# Directorio principal a usar
+
+setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R")
 
 # Librerías que necesitamos
 
@@ -15,13 +22,7 @@ p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2,
 
 options(scipen = 999)
 
-# Limpiamos el entorno
-
-rm(list=ls())
-
-# Cargamos archivos básicos
-
-setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
+# Cargar archivos básicos de información
 
  # Listado ESE
     lista_ese <- read_excel("listado_ese.xlsx", na = "NA")
@@ -46,8 +47,11 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
 
  # Listado ESE
     deflactor <- read_excel("deflactor.xlsx", na = "NA")
+    
+ # Vigencias que necesitamos
+    vigencias <- data.frame(vigencia = c(2012:2019))
 
-# Scripts que vamos a ejecutar
+# Compilación de scrips a usar
 
     histograma      <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/2_histograma.R"
     nubes_puntos    <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/3_nubes_puntos.R"
@@ -66,7 +70,7 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data/R")
     source(res_256)
     source(siho)
     source(panel)
-    #source(clusters) #En el panel no se imputan los valores NA/NAN/INF entonces este falla
+    #source(clusters) #Para ejecutar se requiere gestionar los valores NA/NAN/INF
     source(pca)
     source(cuartiles)
     source(regresion)

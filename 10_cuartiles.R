@@ -28,8 +28,11 @@ nombres_variables_19 <- nombres_variables_19$id
 #-------------------------------------------------------------------------------
 # Análisis 2012 a 2015
 
-matrix_data <- matrix %>% select(all_of(nombres_variables_15))
-matrix_data <- matrix_data %>% left_join(lista_ese, by = join_by("COD_CHIP"=="cod_habilitacion"), keep = FALSE) %>% 
+matrix_data <- matrix %>% 
+  select(all_of(nombres_variables_15))
+
+matrix_data <- matrix_data %>% 
+  left_join(lista_ese, by = join_by("COD_CHIP"=="cod_habilitacion"), keep = FALSE) %>% 
   filter(VIGENCIA < 2016)
 
 matrix_cuartiles <- matrix_data %>%
@@ -59,12 +62,14 @@ mx_cuartil_resumen <- matrix_cuartiles %>%
 
 mx_cuartil_tabla1 <- mx_cuartil_resumen[complete.cases(mx_cuartil_resumen), ]
 
-
 #-------------------------------------------------------------------------------
 # Análisis 2016 a 2019
 
-matrix_data <- matrix %>% select(all_of(nombres_variables_19))
-matrix_data <- matrix_data %>% left_join(lista_ese, by = join_by("COD_CHIP"=="cod_habilitacion"), keep = FALSE) %>% 
+matrix_data <- matrix %>% 
+  select(all_of(nombres_variables_19))
+
+matrix_data <- matrix_data %>% 
+  left_join(lista_ese, by = join_by("COD_CHIP"=="cod_habilitacion"), keep = FALSE) %>% 
   filter(VIGENCIA > 2015)
 
 matrix_cuartiles <- matrix_data %>%
@@ -94,16 +99,17 @@ mx_cuartil_resumen <- matrix_cuartiles %>%
 
 mx_cuartil_tabla2 <- mx_cuartil_resumen[complete.cases(mx_cuartil_resumen), ]
 
+#-------------------------------------------------------------------------------
+
 # Tabla para combinar los dos periodos
 
 mx_cuartil_tabla <- bind_rows(mx_cuartil_tabla1, mx_cuartil_tabla2)
 
-#-------------------------------------------------------------------------------
 # Gráfico de caja Nuevos Riesgos
 
 na_summary <- sapply(mx_cuartil_tabla, function(col) sum(is.na(col)))
+
 na_columns <- na_summary[na_summary > 0]
-print(na_columns)
 
 # Figura Año / Nivel
 
@@ -151,7 +157,6 @@ mx_cuartil_tabla <- mx_cuartil_tabla[complete.cases(mx_cuartil_tabla), ]
 
 # Tabla con la comparación de casos**
 
-mx_cuartil_tabla
 write.table(mx_cuartil_tabla, file = "comparación.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 # Tabla agrupada de comparación de casos**
@@ -161,12 +166,18 @@ riesgos_diferentes2 <- table(
   as.data.frame() %>% 
   rename(Vigencia = Var1, Nuevo_Riesgo = Var2, Riesgo_Anterior = Var3, Total = Freq)
 
-nuevo_riesgo <- table(mx_cuartil_tabla$VIGENCIA, mx_cuartil_tabla$nivel, mx_cuartil_tabla$Nuevo_Riesgo) %>%  as.data.frame() %>% mutate(Grupo = "Nuevo Riesgo")
-riesgo_anterior <- table(mx_cuartil_tabla$VIGENCIA, mx_cuartil_tabla$nivel,mx_cuartil_tabla$Riesgo_Anterior) %>%  as.data.frame() %>% mutate(Grupo = "Riesgo Anterior")
+nuevo_riesgo <- table(mx_cuartil_tabla$VIGENCIA, mx_cuartil_tabla$nivel, mx_cuartil_tabla$Nuevo_Riesgo) %>%  
+  as.data.frame() %>% 
+  mutate(Grupo = "Nuevo Riesgo")
 
-# Tabla comparativo de las clasificaciones
+riesgo_anterior <- table(mx_cuartil_tabla$VIGENCIA, mx_cuartil_tabla$nivel,mx_cuartil_tabla$Riesgo_Anterior) %>%  
+  as.data.frame() %>% 
+  mutate(Grupo = "Riesgo Anterior")
 
-riesgo_combinado <- bind_rows(nuevo_riesgo, riesgo_anterior) %>% rename(VIGENCIA=Var1, Nivel=Var2, Riesgo=Var3, Total=Freq)
+# Tabla comparativa de las clasificaciones
+
+riesgo_combinado <- bind_rows(nuevo_riesgo, riesgo_anterior) %>% 
+  rename(VIGENCIA=Var1, Nivel=Var2, Riesgo=Var3, Total=Freq)
 
 # Tabla y Figura de Riesgos Alto/Medio Antes/Ahora
 
@@ -202,12 +213,12 @@ print(figuras_list[["FiguraNivel1"]])
 print(figuras_list[["FiguraNivel2"]])
 print(figuras_list[["FiguraNivel3"]])
 
-
 # Figuras por año
 
 colores <- c("Nuevo Riesgo" = "#54BDC2", "Riesgo Anterior" = "#F88570")
 
-riesgo_combinado_vigencia <- riesgo_combinado %>%  filter(VIGENCIA == "2019")
+riesgo_combinado_vigencia <- riesgo_combinado %>%  
+  filter(VIGENCIA == "2019")
 
 figura_riesgos_2019 <- ggplot(riesgo_combinado_vigencia, aes(x = Riesgo, y = Total, fill = Grupo)) +
   geom_bar(stat = "identity", position = "dodge") + 
@@ -260,17 +271,38 @@ tabla_promedio <- rbind(tabla_promedio_1, tabla_promedio_2)
 
 figura_promedio_anual <- ggplot(tabla_promedio, aes(x = Riesgo, y = promedio, fill = modelo)) + 
   geom_bar(stat = "identity", position = "dodge") +  
-  geom_text(aes(label = round(promedio, 2)), vjust = -0.5, position = position_dodge(1), size = 3.5) +  # Números sobre las barras
+  geom_text(aes(label = round(promedio, 2)), vjust = -0.5, position = position_dodge(1), size = 3.5, color = "black") +
   scale_fill_manual(values = c("Nueva" = "#86CAE1", "Anterior" = "#A0A6A7")) + 
   labs(title = "Promedio anual de ESE por categoría de riesgo",
-    fill = "Metodología", y = "Promedio anual", x = "Grupo Riesgo") +  
-  theme_minimal(base_size = 15) + 
-  theme(panel.background = element_rect(fill = "white", color = "white"),  
-        legend.position = "right")  
+       fill = "Metodología", y = "Promedio anual", x = "Grupo Riesgo") +  
+  theme_minimal() + 
+  theme(
+    panel.background = element_rect(fill = "white", color = "white"),
+    legend.position = "right",
+    text = element_text(size = 10, color = "black"), 
+    axis.title = element_text(size = 10, color = "black", face = "bold"),  
+    axis.text = element_text(size = 10, color = "black"),   
+    plot.title = element_text(size = 10, color = "black", face = "bold"),  
+    legend.text = element_text(size = 10, color = "black"),  
+    legend.title = element_text(size = 10, color = "black")  
+  )
   
 figura_promedio_anual
 
 # Tabla de matrix con Riesgos Nuevo/Actual--------------------------------------
 
-panel_final <- matrix %>% left_join(mx_cuartil_tabla, by = c("COD_CHIP"="COD_CHIP","VIGENCIA"="VIGENCIA"))
+cambios_riesgos <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/cambios_riesgos.txt", 
+                                   delim = "\t", escape_double = FALSE,
+                                   trim_ws = TRUE)
+
+panel_final <- matrix %>% 
+  left_join(mx_cuartil_tabla, by = c("COD_CHIP"="COD_CHIP","VIGENCIA"="VIGENCIA")) %>% 
+  filter(!is.na(nombre_ese)) %>% 
+  left_join(cambios_riesgos, by = join_by("Nuevo_Riesgo", "Riesgo_Anterior"))
+
+table(panel_final$Cambio, useNA = "always") # Esperamos NA = 0
+
+table(panel_final$Nuevo_Riesgo, panel_final$Riesgo_Anterior)
+
 write.table(panel_final, file = "panel_matrix.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
