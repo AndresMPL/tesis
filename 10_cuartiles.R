@@ -1,7 +1,7 @@
 
 # Método Cuartiles--------------------------------------------------------------
 
-# Listado con el nombre de variables SELECCIONADAS
+# Debe cargarse un listado con el nombre de variables SELECCIONADAS
 # Recomendación: Ir a carpeta para depurar los indicadores
 # Evaluamos variables diferentes para el periodo 2012 a 2015 y 2016 a 2019
 
@@ -305,4 +305,3 @@ table(panel_final$Cambio, useNA = "always") # Esperamos NA = 0
 table(panel_final$Nuevo_Riesgo, panel_final$Riesgo_Anterior)
 
 write.table(panel_final, file = "panel_matrix.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
-
