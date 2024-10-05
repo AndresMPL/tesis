@@ -10,7 +10,9 @@
 # Librerías que necesitamos
 
 library(pacman)
-p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2, cluster,factoextra)
+p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2,
+       cluster,factoextra, nnet)
+
 options(scipen = 999)
 
 # Limpiamos el entorno

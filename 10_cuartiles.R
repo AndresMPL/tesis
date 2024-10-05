@@ -2,27 +2,28 @@
 # Método Cuartiles--------------------------------------------------------------
 
 # Listado con el nombre de variables SELECCIONADAS
+# Recomendación: Ir a carpeta para depurar los indicadores
 # Evaluamos variables diferentes para el periodo 2012 a 2015 y 2016 a 2019
 
 nombres_variables_15 <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/variables15.txt", 
                                 delim = "\t", escape_double = FALSE,
-                                trim_ws = TRUE) %>% select(variable)
+                                trim_ws = TRUE) %>% select(id)
 
 nombres_variables_15 <- nombres_variables_15 %>% 
-  add_row(variable="VIGENCIA") %>% 
-  add_row(variable="COD_CHIP")
-nombres_variables_15 <- nombres_variables_15$variable
+  add_row(id="VIGENCIA") %>% 
+  add_row(id="COD_CHIP")
 
+nombres_variables_15 <- nombres_variables_15$id
 
 nombres_variables_19 <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/variables19.txt", 
                                    delim = "\t", escape_double = FALSE,
-                                   trim_ws = TRUE) %>% select(variable)
+                                   trim_ws = TRUE) %>% select(id)
 
 nombres_variables_19 <- nombres_variables_19 %>% 
-  add_row(variable="VIGENCIA") %>% 
-  add_row(variable="COD_CHIP")
-nombres_variables_19 <- nombres_variables_19$variable
+  add_row(id="VIGENCIA") %>% 
+  add_row(id="COD_CHIP")
 
+nombres_variables_19 <- nombres_variables_19$id
 
 #-------------------------------------------------------------------------------
 # Análisis 2012 a 2015
@@ -163,7 +164,7 @@ riesgos_diferentes2 <- table(
 nuevo_riesgo <- table(mx_cuartil_tabla$VIGENCIA, mx_cuartil_tabla$nivel, mx_cuartil_tabla$Nuevo_Riesgo) %>%  as.data.frame() %>% mutate(Grupo = "Nuevo Riesgo")
 riesgo_anterior <- table(mx_cuartil_tabla$VIGENCIA, mx_cuartil_tabla$nivel,mx_cuartil_tabla$Riesgo_Anterior) %>%  as.data.frame() %>% mutate(Grupo = "Riesgo Anterior")
 
-# Gráfico comparativo de las clasificaciones
+# Tabla comparativo de las clasificaciones
 
 riesgo_combinado <- bind_rows(nuevo_riesgo, riesgo_anterior) %>% rename(VIGENCIA=Var1, Nivel=Var2, Riesgo=Var3, Total=Freq)
 
@@ -217,19 +218,59 @@ figura_riesgos_2019 <- ggplot(riesgo_combinado_vigencia, aes(x = Riesgo, y = Tot
        fill = "Grupo de Datos") +
   theme_minimal() +
   theme(
-    text = element_text(size = 12), # Establecer la fuente y el tamaño de todo el gráfico
-    axis.title = element_text(face = "bold"), # Hacer los títulos de los ejes en negrita
-    axis.title.x = element_text(margin = margin(t = 12)), # Agregar margen superior al título del eje X
-    axis.title.y = element_text(margin = margin(r = 12)), # Agregar margen derecho al título del eje Y
-    legend.title = element_text(face = "bold") # Hacer el título de la leyenda en negrita
+    text = element_text(size = 12), 
+    axis.title = element_text(face = "bold"), 
+    axis.title.x = element_text(margin = margin(t = 12)), 
+    axis.title.y = element_text(margin = margin(r = 12)),
+    legend.title = element_text(face = "bold")
   )
 
-figura_riesgos_2012
-figura_riesgos_2013
-figura_riesgos_2014
-figura_riesgos_2015
-figura_riesgos_2016
-figura_riesgos_2017
-figura_riesgos_2018
-figura_riesgos_2019
+#figura_riesgos_2012
+#figura_riesgos_2013
+#figura_riesgos_2014
+#figura_riesgos_2015
+#figura_riesgos_2016
+#figura_riesgos_2017
+#figura_riesgos_2018
+#figura_riesgos_2019
 
+# Tabla y gráfico de Riesgos promedio Total en todo el periodo------------------
+
+tabla_promedio_1 <- mx_cuartil_tabla %>% 
+  select(VIGENCIA, Nuevo_Riesgo, COD_CHIP) %>% 
+  rename(Riesgo = Nuevo_Riesgo) %>% 
+  group_by(VIGENCIA, Riesgo) %>% 
+  summarise(Total = n()) %>% 
+  group_by(Riesgo) %>% 
+  summarise(promedio = mean(Total)) %>% 
+  select(promedio, Riesgo) %>% 
+  mutate(modelo = "Nueva")
+
+tabla_promedio_2 <- mx_cuartil_tabla %>% 
+  select(VIGENCIA, Riesgo_Anterior, COD_CHIP) %>% 
+  rename(Riesgo = Riesgo_Anterior) %>% 
+  group_by(VIGENCIA, Riesgo) %>% 
+  summarise(Total = n()) %>% 
+  group_by(Riesgo) %>% 
+  summarise(promedio = mean(Total)) %>% 
+  select(promedio, Riesgo) %>% 
+  mutate(modelo = "Anterior")
+
+tabla_promedio <- rbind(tabla_promedio_1, tabla_promedio_2)
+
+figura_promedio_anual <- ggplot(tabla_promedio, aes(x = Riesgo, y = promedio, fill = modelo)) + 
+  geom_bar(stat = "identity", position = "dodge") +  
+  geom_text(aes(label = round(promedio, 2)), vjust = -0.5, position = position_dodge(1), size = 3.5) +  # Números sobre las barras
+  scale_fill_manual(values = c("Nueva" = "#86CAE1", "Anterior" = "#A0A6A7")) + 
+  labs(title = "Promedio anual de ESE por categoría de riesgo",
+    fill = "Metodología", y = "Promedio anual", x = "Grupo Riesgo") +  
+  theme_minimal(base_size = 15) + 
+  theme(panel.background = element_rect(fill = "white", color = "white"),  
+        legend.position = "right")  
+  
+figura_promedio_anual
+
+# Tabla de matrix con Riesgos Nuevo/Actual--------------------------------------
+
+panel_final <- matrix %>% left_join(mx_cuartil_tabla, by = c("COD_CHIP"="COD_CHIP","VIGENCIA"="VIGENCIA"))
+write.table(panel_final, file = "panel_matrix.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)

@@ -1,9 +1,10 @@
 
 #------- Creación Panel de Datos
 
-setwd("C:/Users/andre/OneDrive - Universidad de los andes/Tesis/data")
+setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data")
 
 # Tablas con columnas que necesitamos conservar
+
 mx_vitales <- estad_vitales_unico %>% select(VIGENCIA, COD_CHIP, capitulo_ajustado, VALOR) %>% 
   rename(RESULTADO = capitulo_ajustado) %>% 
   mutate(CAPITULO = "VITALES")
@@ -100,9 +101,11 @@ nombres <- data.frame(id = paste0("var", seq_along(nombres$nombre)),nombre = nom
 panel <- panel %>% left_join(nombres, by = join_by("RESULTADO"=="nombre"), keep = FALSE)
 
 # Guardamos los nombres y capítulos
+
 panel_indicadores <- panel %>% group_by(CAPITULO, RESULTADO, id) %>%  summarise(Total = n()) %>% select(-Total)
 
 write.table(panel, file = "panel_original.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
 panel <- panel %>%  select(-RESULTADO, -CAPITULO)
 
 # Generamos un Matriz
@@ -116,36 +119,47 @@ panel_matrix <- panel %>%
   as.matrix()
 
 panel_matrix <- as.data.frame(panel_matrix)
-write.table(panel_matrix, file = "matrix.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
-
-matrix <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/matrix.txt", 
-                     delim = "\t", escape_double = FALSE,
-                     trim_ws = TRUE)
-
 vigencias <- data.frame(vigencia = c(2012:2019))
 
 # Filtramos los años correctos
-matrix <- matrix %>% filter(VIGENCIA %in% vigencias$vigencia)
+
+panel_matrix <- panel_matrix %>% filter(VIGENCIA %in% vigencias$vigencia)
+
+write.table(panel_matrix, file = "matrix.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+matrix <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/matrix.txt", 
+                     delim = "\t", escape_double = FALSE,
+                     trim_ws = TRUE)
 
 
 # Tabla para estimar el nivel de reporte por año--------------------------------
 
-nivel_reporte <- panel %>%  group_by(VIGENCIA, COD_CHIP, id) %>% summarise(Total = sum(!is.na(VALOR)))
+nivel_reporte_matriz <- panel %>%
+  group_by(VIGENCIA, COD_CHIP, id) %>%
+  summarise(Total = sum(!is.na(VALOR)), .groups = 'drop') %>%
+  group_by(VIGENCIA, id) %>%
+  summarise(Total = sum(Total), .groups = 'drop') %>%
+  mutate(Porce_Reporte = Total / nrow(lista_ese)) %>%
+  select(-Total) %>%
+  pivot_wider(names_from = VIGENCIA, values_from = Porce_Reporte) %>%
+  mutate(Promedio_porc = round(rowMeans(across(`2012`:`2019`), na.rm = TRUE) * 100, 2)) %>%
+  left_join(nombres, by = join_by("id"), keep = FALSE) %>%
+  left_join(panel_indicadores, by = join_by("id")) %>%
+  select(-nombre) %>%
+  arrange(desc(Promedio_porc))
 
-nivel_reporte <- nivel_reporte %>%
-  group_by(VIGENCIA, id) %>% 
-  summarise(Total = sum(Total))
-
-nivel_reporte <- nivel_reporte %>%  mutate(Porce_Reporte = Total / nrow(lista_ese))
-
-nivel_reporte_matriz <- nivel_reporte %>% select(-Total)
-nivel_reporte_matriz <- pivot_wider(nivel_reporte_matriz, names_from = VIGENCIA, values_from = Porce_Reporte) 
-nivel_reporte_matriz <- nivel_reporte_matriz %>% mutate(Promedio_porc = round(rowMeans(across(`2012`:`2019`), na.rm = TRUE)*100, 2))
-
-nivel_reporte_matriz <- nivel_reporte_matriz %>% 
-  left_join(nombres, by = join_by("id"), keep = FALSE) %>% 
-  left_join(panel_indicadores, by = join_by("id"))
 
 # Exporta la tabla del nivel promedio de reporte por indicador
+
 write.table(nivel_reporte_matriz, file = "reporte_indicadores.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+
+# Generamos la tabla de los indicadores que superan el promedio
+
+promedio_reporte <- mean(nivel_reporte_matriz$Promedio_porc, na.rm = TRUE)
+
+tabla_reportes <- nivel_reporte_matriz %>% 
+  filter(Promedio_porc >= promedio_reporte)
+
+write.table(tabla_reportes, file = "ind_mayor_promedio.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
