@@ -26,6 +26,13 @@ nombres_variables_19 <- nombres_variables_19 %>%
 nombres_variables_19 <- nombres_variables_19$id
 
 #-------------------------------------------------------------------------------
+
+# La variable var60 - PORCENTAJE COMPROMISOS SOBRE RECAUDO
+# tendrá una calificación de 
+# 1 (Sin Riesgo) cuando sea menor/igual que 1
+# 4 (Riesgo Alto) cuando sea mayor que 1
+
+#-------------------------------------------------------------------------------
 # Análisis 2012 a 2015
 
 matrix_data <- matrix %>% 
@@ -36,16 +43,18 @@ matrix_data <- matrix_data %>%
   filter(VIGENCIA < 2016)
 
 matrix_cuartiles <- matrix_data %>%
-  group_by(nivel, VIGENCIA) %>%
+  group_by(nivel, VIGENCIA, caracter) %>%
   mutate(across(starts_with("var"),            
                 list(Cuartil = ~ ntile(., 4)),
                 .names = "{.col}_cuartil")) %>%
   ungroup() %>%
   rowwise() %>%
-  mutate(Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)) 
+  mutate(
+    var60_cuartil = if_else(var60 <= 1, 1, 4),
+    Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)) 
 
 matrix_cuartiles <- matrix_cuartiles %>%
-  group_by(nivel, VIGENCIA) %>%
+  group_by(nivel, VIGENCIA, caracter) %>%
   mutate(Nuevo_Riesgo_Cuartil = ntile(Promedio_Cuartil, 4),
          Nuevo_Riesgo = case_when(
            Nuevo_Riesgo_Cuartil == 1 ~ "Sin riesgo",
@@ -73,16 +82,18 @@ matrix_data <- matrix_data %>%
   filter(VIGENCIA > 2015)
 
 matrix_cuartiles <- matrix_data %>%
-  group_by(nivel, VIGENCIA) %>%
+  group_by(nivel, VIGENCIA, caracter) %>%
   mutate(across(starts_with("var"),            
                 list(Cuartil = ~ ntile(., 4)),
                 .names = "{.col}_cuartil")) %>%
   ungroup() %>%
   rowwise() %>%
-  mutate(Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)) 
+  mutate(
+    var60_cuartil = if_else(var60 <= 1, 1, 4),
+    Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)) 
 
 matrix_cuartiles <- matrix_cuartiles %>%
-  group_by(nivel, VIGENCIA) %>%
+  group_by(nivel, VIGENCIA, caracter) %>%
   mutate(Nuevo_Riesgo_Cuartil = ntile(Promedio_Cuartil, 4),
          Nuevo_Riesgo = case_when(
            Nuevo_Riesgo_Cuartil == 1 ~ "Sin riesgo",
@@ -127,17 +138,21 @@ figura3
 
 figura4 <- ggplot(mx_cuartil_tabla, aes(x = factor(VIGENCIA), y = Promedio_Cuartil)) +
   geom_boxplot(aes(fill = factor(..group..)), color = "black") +
-  #geom_jitter(width = 0.1, size = 1, color = "black", alpha = 0.6) +  # Añadir puntos de datos
   labs(
     title = "Gráfico de Caja: Distribución de Promedio Cuartiles por Año",
     x = "Año",
     y = "Promedio"
   ) +
-  scale_fill_grey(start = 0.4, end = 0.8) +  # Escala de grises sin nombre
+  scale_fill_grey(start = 0.4, end = 0.8) +  
   theme_minimal() +
-  coord_flip() +  # Gráfico horizontal
+  coord_flip() +
   theme(
-    legend.position = "none"  # Eliminar la leyenda
+    legend.position = "none",  # Eliminar la leyenda
+    panel.grid.major.y = element_blank(), 
+    plot.title = element_text(size = 14),  # Tamaño del título
+    axis.title.x = element_text(size = 14),  # Tamaño de la etiqueta del eje x
+    axis.title.y = element_text(size = 14),  # Tamaño de la etiqueta del eje y
+    axis.text = element_text(size = 14)  # Tamaño del texto de los ejes
   )
 
 figura4
@@ -268,6 +283,7 @@ tabla_promedio_2 <- mx_cuartil_tabla %>%
   mutate(modelo = "Anterior")
 
 tabla_promedio <- rbind(tabla_promedio_1, tabla_promedio_2)
+write.table(tabla_promedio, file = "tabla_promedio.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 figura_promedio_anual <- ggplot(tabla_promedio, aes(x = Riesgo, y = promedio, fill = modelo)) + 
   geom_bar(stat = "identity", position = "dodge") +  
@@ -300,7 +316,7 @@ panel_final <- matrix %>%
   filter(!is.na(nombre_ese)) %>% 
   left_join(cambios_riesgos, by = join_by("Nuevo_Riesgo", "Riesgo_Anterior"))
 
-table(panel_final$Cambio, useNA = "always") # Esperamos NA = 0
+table(panel_final$Cambio, useNA = "always") # Esperamos NA=0
 
 table(panel_final$Nuevo_Riesgo, panel_final$Riesgo_Anterior)
 

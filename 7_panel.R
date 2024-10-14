@@ -36,10 +36,16 @@ mx_ingresos <- ingresos_total %>%
   rename(VALOR = porc_recaudo,  VIGENCIA = año, COD_CHIP = codigo_habilitacion) %>% 
   mutate(CAPITULO = "INGRESOS", RESULTADO ="PORCENTAJE DE RECAUDO")
 
-mx_gastos <- gastos_total %>% select(ano, codigo_habilitacion, porc_compromisos, concepto) %>% 
+mx_gastos <- gastos_total %>% 
+  select(ano, codigo_habilitacion, porc_compromisos, concepto) %>% 
   filter(concepto == "TOTAL DE GASTOS") %>% 
   rename(CAPITULO = concepto, VALOR = porc_compromisos, VIGENCIA = ano, COD_CHIP = codigo_habilitacion) %>% 
   mutate(RESULTADO ="PORCENTAJE DE COMPROMISOS")
+
+mx_compromisos_recaudo <- recaudo_compromisos %>% 
+  select(año, codigo_habilitacion, compromisos_recaudo) %>% 
+  rename(VALOR = compromisos_recaudo, VIGENCIA = año, COD_CHIP = codigo_habilitacion) %>% 
+  mutate(CAPITULO = "NIVEL COMPROMISOS", RESULTADO ="PORCENTAJE COMPROMISOS SOBRE RECAUDO")
 
 mx_cartera_60 <- cartera_total %>% 
   select(ano, codigo_habilitacion, porc_60) %>% 
@@ -89,6 +95,7 @@ lista_df <- list(mx_vitales,
                  mx_seguridad,
                  mx_ingresos,
                  mx_gastos,
+                 mx_compromisos_recaudo,
                  mx_cartera_60,
                  mx_cartera_61_90,
                  mx_cartera_91_180,

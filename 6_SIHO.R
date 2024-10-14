@@ -31,6 +31,21 @@ gastos_total <- gastos %>% filter(concepto == "TOTAL DE GASTOS" | concepto == "I
 
 gastos_total <- gastos_total %>%  mutate(porc_compromisos = gastos_compromiso_real/gastos_definitivo_real)
 
+# RECAUDO VS COMPROMISOS -------------------------------------------------------
+
+# Cargamos ingresos/gastos 2012 - 2019 y generamos tabla
+
+gastos_total_unico <- gastos_total %>% 
+  filter(concepto == "TOTAL DE GASTOS") %>% 
+  select(clave, gastos_compromiso_real)
+  
+recaudo_compromisos <- ingresos_total %>%
+  left_join(gastos_total_unico, by = join_by(clave))
+
+# Tabla de porcentaje
+recaudo_compromisos <- recaudo_compromisos %>% 
+  mutate(compromisos_recaudo = gastos_compromiso_real/ingresos_recaudo_real)
+
 # CARTERA-----------------------------------------------------------------------
 
 # Cargamos Cartera 2012 - 2019
