@@ -18,7 +18,8 @@ setwd("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R")
 
 library(pacman)
 p_load(dplyr, tidyverse, readr, openxlsx, writexl, readxl, readr,rlist, ggplot2,
-       cluster,factoextra, nnet)
+       cluster,factoextra, nnet, tidyr, caret, broom, glmnet, lmtest, sandwich, 
+       stargazer,flextable, lmtestcar)
 
 options(scipen = 999)
 
@@ -62,7 +63,7 @@ options(scipen = 999)
     clusters        <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/8_clusters.R"
     pca             <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/9_PCA.R"
     cuartiles       <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/10_cuartiles.R"
-    regresion       <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/11_reg.R"
+    OLS             <- "C:/Users/andre/OneDrive - Universidad de los andes/Tesis/scripts/11_OLS.R"
     
     source(histograma)
     source(nubes_puntos)
@@ -73,5 +74,5 @@ options(scipen = 999)
     #source(clusters) #Para ejecutar se requiere gestionar los valores NA/NAN/INF
     source(pca)
     source(cuartiles)
-    source(regresion)
+    source(OLS)
    

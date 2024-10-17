@@ -28,9 +28,8 @@ nombres_variables_19 <- nombres_variables_19$id
 #-------------------------------------------------------------------------------
 
 # La variable var60 - PORCENTAJE COMPROMISOS SOBRE RECAUDO
-# tendrá una calificación de 
-# 1 (Sin Riesgo) cuando sea menor/igual que 1
-# 4 (Riesgo Alto) cuando sea mayor que 1
+# no se evalúa en este conjunto
+# para evitar colinealidad con Recaudo y Compromisos
 
 #-------------------------------------------------------------------------------
 # Análisis 2012 a 2015
@@ -44,14 +43,19 @@ matrix_data <- matrix_data %>%
 
 matrix_cuartiles <- matrix_data %>%
   group_by(nivel, VIGENCIA, caracter) %>%
-  mutate(across(starts_with("var"),            
-                list(Cuartil = ~ ntile(., 4)),
+  mutate(across(starts_with("ascendente"), 
+                list(Cuartil = ~ ntile(desc(.), 4)), # Ascendente con cuartiles inversos
+                .names = "{.col}_cuartil")) %>%
+  mutate(across(starts_with("descendente"), 
+                list(Cuartil = ~ ntile(., 4)), # Descendente con cuartiles estándar
                 .names = "{.col}_cuartil")) %>%
   ungroup() %>%
   rowwise() %>%
+  #rename(test60 = var60_cuartil) %>%
   mutate(
-    var60_cuartil = if_else(var60 <= 1, 1, 4),
-    Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)) 
+    #test60 = if_else(orden_var60 <= 1, 1, 4),
+    Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)
+  )
 
 matrix_cuartiles <- matrix_cuartiles %>%
   group_by(nivel, VIGENCIA, caracter) %>%
@@ -83,14 +87,19 @@ matrix_data <- matrix_data %>%
 
 matrix_cuartiles <- matrix_data %>%
   group_by(nivel, VIGENCIA, caracter) %>%
-  mutate(across(starts_with("var"),            
-                list(Cuartil = ~ ntile(., 4)),
+  mutate(across(starts_with("ascendente"), 
+                list(Cuartil = ~ ntile(desc(.), 4)), # Ascendente con cuartiles inversos
+                .names = "{.col}_cuartil")) %>%
+  mutate(across(starts_with("descendente"), 
+                list(Cuartil = ~ ntile(., 4)), # Descendente con cuartiles estándar
                 .names = "{.col}_cuartil")) %>%
   ungroup() %>%
   rowwise() %>%
+  #rename(test60 = var60_cuartil) %>%
   mutate(
-    var60_cuartil = if_else(var60 <= 1, 1, 4),
-    Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)) 
+    #test60 = if_else(var60 <= 1, 1, 4),
+    Promedio_Cuartil = mean(c_across(ends_with("cuartil")), na.rm = TRUE)
+  )
 
 matrix_cuartiles <- matrix_cuartiles %>%
   group_by(nivel, VIGENCIA, caracter) %>%
@@ -141,18 +150,18 @@ figura4 <- ggplot(mx_cuartil_tabla, aes(x = factor(VIGENCIA), y = Promedio_Cuart
   labs(
     title = "Gráfico de Caja: Distribución de Promedio Cuartiles por Año",
     x = "Año",
-    y = "Promedio"
+    y = "Cuartil de Riesgo"
   ) +
   scale_fill_grey(start = 0.4, end = 0.8) +  
   theme_minimal() +
   coord_flip() +
   theme(
-    legend.position = "none",  # Eliminar la leyenda
+    legend.position = "none",
     panel.grid.major.y = element_blank(), 
-    plot.title = element_text(size = 14),  # Tamaño del título
-    axis.title.x = element_text(size = 14),  # Tamaño de la etiqueta del eje x
-    axis.title.y = element_text(size = 14),  # Tamaño de la etiqueta del eje y
-    axis.text = element_text(size = 14)  # Tamaño del texto de los ejes
+    plot.title = element_text(size = 9),
+    axis.title.x = element_text(size = 9),  
+    axis.title.y = element_text(size = 9),  
+    axis.text = element_text(size = 9)
   )
 
 figura4

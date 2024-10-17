@@ -119,6 +119,11 @@ temp <- panel %>%
 nombres <- data.frame(nombre = unique(panel$RESULTADO))
 
 nombres <- data.frame(id = paste0("var", seq_along(nombres$nombre)),nombre = nombres$nombre)
+write.table(nombres, file = "nombre_orden.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+nombres <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/data/R/orden_cuartiles.txt", 
+                              delim = "\t", escape_double = FALSE,
+                              trim_ws = TRUE)
 
 panel <- panel %>% 
   left_join(nombres, by = join_by("RESULTADO"=="nombre"), keep = FALSE)
@@ -126,19 +131,19 @@ panel <- panel %>%
 # Guardamos los nombres y capítulos
 
 panel_indicadores <- panel %>% 
-  group_by(CAPITULO, RESULTADO, id) %>%  
+  group_by(CAPITULO, RESULTADO, orden) %>%  
   summarise(Total = n()) %>% select(-Total)
 
 write.table(panel, file = "panel_original.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 panel <- panel %>%  
-  select(-RESULTADO, -CAPITULO)
+  select(-RESULTADO, -CAPITULO, -id, -tipo)
 
 # Generamos un Matriz
 
 panel_matrix <- panel %>% 
   pivot_wider(
-    names_from = id, 
+    names_from = orden, 
     values_from = VALOR
     ) %>% 
   #replace(is.na(.), 0) %>%
@@ -160,16 +165,16 @@ matrix <- read_delim("C:/Users/andre/OneDrive - Universidad de los andes/tesis/d
 # Tabla para estimar el nivel de reporte por año--------------------------------
 
 nivel_reporte_matriz <- panel %>%
-  group_by(VIGENCIA, COD_CHIP, id) %>%
+  group_by(VIGENCIA, COD_CHIP, orden) %>%
   summarise(Total = sum(!is.na(VALOR)), .groups = 'drop') %>%
-  group_by(VIGENCIA, id) %>%
+  group_by(VIGENCIA, orden) %>%
   summarise(Total = sum(Total), .groups = 'drop') %>%
   mutate(Porce_Reporte = Total / nrow(lista_ese)) %>%
   select(-Total) %>%
   pivot_wider(names_from = VIGENCIA, values_from = Porce_Reporte) %>%
   mutate(Promedio_porc = round(rowMeans(across(`2012`:`2019`), na.rm = TRUE) * 100, 2)) %>%
-  left_join(nombres, by = join_by("id"), keep = FALSE) %>%
-  left_join(panel_indicadores, by = join_by("id")) %>%
+  left_join(nombres, by = join_by("orden"), keep = FALSE) %>%
+  left_join(panel_indicadores, by = join_by("orden")) %>%
   select(-nombre) %>%
   arrange(desc(Promedio_porc))
 
